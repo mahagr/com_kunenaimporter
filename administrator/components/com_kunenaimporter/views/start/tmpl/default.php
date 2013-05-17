@@ -47,6 +47,16 @@ JFactory::getApplication()->enqueueMessage('WARNING: Using this component may ca
 							</div>
 							<div class="icon-container">
 							<div class="icon">
+								<a href="index.php?option=com_kunenaimporter&amp;task=start&amp;select=jomsocial&amp;<?php echo JUtility::getToken() ?>=1">
+									<?php
+									// FIXME: icon
+									echo JHTML::_ ( 'image', 'administrator/components/com_kunenaimporter/assets/joobb-gray.png', 'JomSocial' ) ?>
+									<span>JomSocial</span>
+								</a>
+							</div>
+							</div>
+							<div class="icon-container">
+							<div class="icon">
 								<a href="index.php?option=com_kunenaimporter&amp;task=start&amp;select=joobb&amp;<?php echo JUtility::getToken() ?>=1">
 									<?php echo JHTML::_ ( 'image', 'administrator/components/com_kunenaimporter/assets/joobb-gray.png', 'Joo!BB' ) ?>
 									<span>Joo!BB (experimental)</span>

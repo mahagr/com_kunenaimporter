@@ -15,9 +15,6 @@ defined ( '_JEXEC' ) or die ();
 // Import Joomla! libraries
 jimport ( 'joomla.application.component.model' );
 
-// Everything else than user import can be found from here:
-require_once (JPATH_COMPONENT . '/models/kunena.php');
-
 class KunenaimporterModelImport extends JModel {
 	protected $userfields = array(
 			'topics'=>array('first_post_userid', 'last_post_userid'),
@@ -46,11 +43,16 @@ class KunenaimporterModelImport extends JModel {
 			// Joomla 1.5
 			$this->usertypes = array('Registered' => 18, 'Author' => 19, 'Editor' => 20, 'Publisher' => 21, 'Manager' => 23, 'Administrator' => 24);
 		}
+
+		// Everything else than user import can be found from here:
+		if (class_exists('KunenaForum')) {
+			require_once (JPATH_COMPONENT . '/models/kunena.php');
+		}
 	}
 
 	public function getImportOptions() {
 		// version
-		$options = array ('config', 'users', 'mapusers', 'createusers', 'userprofile', 'ranks', 'sessions', 'whoisonline', 'categories', 'usercategories_role', 'usercategories_allreadtime', 'usercategories_subscribed', 'topics', 'messages', 'polls', 'pollsoptions', 'pollsusers', 'usertopics_allreadtime', 'usertopics_subscribed', 'attachments', 'favorites', 'smilies', 'announcements', 'avatargalleries' );
+		$options = array ('config', 'users', 'mapusers', 'createusers', 'userprofile',  'avatars', 'ranks', 'sessions', 'whoisonline', 'categories', 'usercategories_role', 'usercategories_allreadtime', 'usercategories_subscribed', 'topics', 'messages', 'polls', 'pollsoptions', 'pollsusers', 'usertopics_allreadtime', 'usertopics_subscribed', 'attachments', 'favorites', 'smilies', 'announcements', 'avatargalleries' );
 		return $options;
 	}
 
@@ -191,6 +193,8 @@ class KunenaimporterModelImport extends JModel {
 			return;
 		if ($option == 'mapusers' || $option == 'createusers')
 			return;
+		if ($option == 'avatars')
+			return;
 		if ($option == 'users') {
 			if ($truncateusers) $this->truncateJoomlaUsers();
 			$option = 'extuser';
@@ -303,7 +307,10 @@ class KunenaimporterModelImport extends JModel {
 			case 'usertopics_subscribed':
 				$count = $this->importUserTopics( $option, $data );
 				break;
-				case 'users':
+			case 'avatars':
+				$count = $this->importAvatars( $data );
+				break;
+			case 'users':
 				$option = 'extuser';
 			case 'userprofile':
 				// karma_time, banned:datetime
@@ -416,7 +423,7 @@ class KunenaimporterModelImport extends JModel {
 		return $count;
 	}
 
-	protected function importDefault($option, &$data) {
+	protected function importDefault($option, &$data, $update = null) {
 		$this->updateUserFields($option, $data);
 
 		$this->commitStart ();
@@ -439,12 +446,18 @@ class KunenaimporterModelImport extends JModel {
 			}
 			// Save row into table
 			$table = JTable::getInstance ( $option, 'KunenaImporterTable' );
+			if ($update) $table->load($item->$update);
 			if ($table->save ( $item ) === false)
 				die ( "ERROR: " . $table->getError () );
 			$count++;
 		}
 		$this->commitEnd ();
 		return $count;
+	}
+
+
+	protected function importAvatars(&$data) {
+		return $this->importDefault('userprofile', $data, 'userid');
 	}
 
 	protected function importAttachments(&$data) {

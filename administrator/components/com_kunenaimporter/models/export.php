@@ -183,7 +183,7 @@ class KunenaimporterModelExport extends JModel {
 
 	public function detect() {
 		// Kunena detection and version check
-		$minKunenaVersion = '2.0.0-RC2';
+		$minKunenaVersion = '2.0.0';
 		if (! class_exists ( 'KunenaForum' ) || !KunenaForum::isCompatible($minKunenaVersion) || !KunenaForum::installed()) {
 			$this->addMessage ( '<div>Kunena version: <b style="color:red">FAILED</b></div>' );
 			$this->addMessage ( '<br /><div><b>You need to install Kunena '.$minKunenaVersion.'!</b></div>' );

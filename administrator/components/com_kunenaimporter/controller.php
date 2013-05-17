@@ -203,7 +203,6 @@ class KunenaImporterController extends JController {
 		}
 		$replace = JRequest::getInt ( 'replace', 0 );
 
-		require_once (JPATH_COMPONENT . DS . 'models' . DS . 'kunena.php');
 		$importer = $this->getModel ( 'import' );
 
 		$extuser = JTable::getInstance ( 'ExtUser', 'KunenaImporterTable' );
